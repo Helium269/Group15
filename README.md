@@ -1,5 +1,5 @@
 # Group15
-Cizen SHrestha
+Cizen Shrestha
 Sachet Neupane
 Rieshab Dev
 Umanga Adhikari
