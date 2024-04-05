@@ -9,9 +9,9 @@
     <title>Signup Page</title>
     <style>
         body {
-            background-image: url('plane.jpg'); /* Replace 'path_to_your_image.jpg' with the actual path to your image */
-            background-size: cover; /* This ensures that the image covers the entire background */
-            background-position: center; /* This centers the image */
+            background-image: url('plane.jpg'); 
+            background-size: cover; 
+            background-position: center; 
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
@@ -62,7 +62,7 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             padding: 20px;
             width: 300px;
-            height: 420px;
+            height: 520px; /* Increased height to accommodate additional fields */
             text-align: center;
             margin-right: 10%;
         }
@@ -112,6 +112,11 @@
         .options a:hover {
             text-decoration: underline;
         }
+
+        /* Added CSS for red border */
+        .error {
+            border: 1px solid red;
+        }
     </style>
     
 </head>
@@ -122,7 +127,7 @@
 
     <div class="container">
         <h2>Signup</h2>
-        <form action="signup.php" method="POST">
+        <form action="signup.php" method="POST" onsubmit="return validateForm()">
             <div class="input-group">
                 <label for="firstname">First Name:</label>
                 <input type="text" id="firstname" name="firstname" required>
@@ -139,11 +144,36 @@
                 <label for="phone">Phone Number:</label>
                 <input type="tel" id="phone" name="phone" required>
             </div>
+            <div class="input-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" name="password" required>
+            </div>
+            <div class="input-group">
+                <label for="password_confirm">Confirm Password:</label>
+                <input type="password" id="password_confirm" name="password_confirm" required>
+            </div>
             <button type="submit" class="btn">Signup</button>
         </form>
         <div class="options">
             <a href="login.php">Already have an account? Login</a>
         </div>
     </div>
+
+    <script>
+        function validateForm() {
+            var password = document.getElementById("password");
+            var confirmPassword = document.getElementById("password_confirm");
+
+            if (password.value != confirmPassword.value) {
+                password.classList.add("error");
+                confirmPassword.classList.add("error");
+                return false;
+            } else {
+                password.classList.remove("error");
+                confirmPassword.classList.remove("error");
+                return true;
+            }
+        }
+    </script>
 </body>
 </html>
