@@ -1,13 +1,84 @@
+<?php
+session_start();
+
+// Initialize variables
+$error = "";
+$passwordError = "";
+
+// Include the database connection script
+require_once('admin/db_connect.php');
+
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get email and password from the form
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+
+    // Query to fetch user from the database based on email
+    $sql = "SELECT * FROM userinfo WHERE email='$email'";
+    $result = $conn->query($sql);
+
+   // Check if the query was successful
+if ($result) {
+    // Check if user exists
+    if ($result->num_rows == 1) {
+        // User found, verify password
+        $row = $result->fetch_assoc();
+
+        if (password_verify($password, $row['password'])) {
+            // Password is correct, set session variables
+            $_SESSION['loggedin'] = true;
+            $_SESSION['email'] = $email;
+
+            // Redirect to home.php
+            header("Location: home.php");
+            exit(); // Make sure to exit after redirection
+        } else {
+            // Password is incorrect
+            $passwordError = "Please enter a valid password";
+        }
+    } else {
+        // User not found
+        $error = "Invalid email or password";
+    }
+} else {
+    // Error occurred while executing the query
+    echo "Error: " . $conn->error;
+}
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Yusei+Magic&display=swap" rel="stylesheet">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login Page</title>
-    <style>
+    <link rel="stylesheet" href="login.css">
+</head>
+<style>
+    .typing-animation {
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            font-size: 50px;
+            margin-left : 80px;
+            font-family: "Yusei Magic", sans-serif;
+            font-weight: 400;
+            font-style: normal;
+            border-right: 3px solid black;
+            animation: typing 2s steps(10, end),
+                       blink-caret 0.5s step-end infinite alternate;   
+        }
+
+        @keyframes typing {
+            from { width: 0 }
+            to { width: 100% }
+        }
+
+        @keyframes blink-caret {
+            from, to { border-color: transparent }
+            50% { border-color: black; }
+        }
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -28,6 +99,7 @@
             font-size: 24px;
             margin-right: 10px;
         }
+
 
         .typing-animation {
             width: 100%;
@@ -137,44 +209,62 @@
             margin-right: 10%;
             
         }
+        .password-error {
+            color: red;
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        .error-border {
+            border: 1px solid red;
+        }
+        @media only screen and (max-width: 600px) {
+        /* Adjust styles for smaller screens */
+        .container {
+            width: 90%; /* Make the container wider */
+            margin-right: auto; /* Center the container horizontally */
+            margin-left: auto; /* Center the container horizontally */
+        }
+    }
+
+    @media only screen and (max-width: 400px) {
+        /* Adjust styles for even smaller screens */
+        .container {
+            width: 80%; /* Further adjust the width of the container */
+        }
+    }
     </style>
     
-</head>
 <body>
-    <div class="logo-container">
-    
+<div class="logo-container">
         <span class="typing-animation">AeroOptimize</span>
     </div>
-
-    <div class="container">
-        <h2>Login</h2>
-        <form action="login.php" method="POST">
-            <div class="input-group">
-                <label for="username">Username:</label>
-                <input type="text" id="username" name="username" required>
+    <header>
+        <!-- Header content if needed -->
+    </header>
+    <section class="login">
+        <div class="container">
+            <h2>Login</h2>
+            <form action="login.php" method="POST">
+                <div class="input-group">
+                    <label for="email">Email:</label>
+                    <input type="text" id="email" name="email" required>
+                </div>
+                <div class="input-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password" required>
+                    <?php if (!empty($passwordError)) echo "<p class='password-error'>$passwordError</p>"; ?>
+                </div>
+                <button type="submit" class="btn">Login</button>
+            </form>
+            <div class="options">
+                <a href="signup.php">Signup</a>
+                <a href="forgotpw.php">Forgot Password</a>
             </div>
-            <div class="input-group">
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn">Login</button>
-        </form>
-        <div class="options">
-            <a href="#">Signup</a>
-            <a href="#">Forgot Password</a>
         </div>
-    </div>
-
-    <script>
-        document.getElementById("showPassword").addEventListener("change", function() {
-            var passwordInput = document.getElementById("password");
-            if (passwordInput.type === "password") {
-                passwordInput.type = "text";
-            } else {
-                passwordInput.type = "password";
-            }
-        });
-    </script>
-    
+    </section>
+    <footer>
+        <!-- Footer content if needed -->
+    </footer>
 </body>
 </html>
