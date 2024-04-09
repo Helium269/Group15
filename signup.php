@@ -57,15 +57,16 @@
         }
 
         .container {
-            background-color: rgba(255, 255, 255, 0.5);
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            padding: 20px;
-            width: 300px;
-            height: 520px; /* Increased height to accommodate additional fields */
-            text-align: center;
-            margin-right: 10%;
-        }
+    background-color: rgba(255, 255, 255, 0.5);
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 20%; /* Change width to auto */
+    max-width: 90%; /* Set max-width for responsiveness */
+    text-align: center;
+    margin-left: auto; /* Move container to rightmost part */
+    margin-right: 0; /* Remove right margin */
+}
 
         .input-group {
             margin-bottom: 20px;
@@ -105,7 +106,7 @@
 
         .options a {
             margin-right: 10px;
-            color: #4caf50;
+            color: #00000;
             text-decoration: none;
         }
 
@@ -120,6 +121,39 @@
     </style>
     
 </head>
+<?php
+session_start();
+
+// Include the database connection script
+require_once('admin/db_connect.php');
+
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    // Get user data from the form
+    $firstname = $_POST['firstname'];
+    $lastname = $_POST['lastname'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $password = $_POST['password'];
+    
+    // Hash the password for security
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    // Insert user data into the database
+    $sql = "INSERT INTO userinfo (firstname, lastname, email, phone, password) 
+            VALUES ('$firstname', '$lastname', '$email', '$phone', '$hashed_password')";
+
+    if ($conn->query($sql) === TRUE) {
+        // Signup successful, redirect to login page
+        header("Location: login.php");
+        exit();
+    } else {
+        // Error occurred while inserting data
+        echo "Error: " . $sql . "<br>" . $conn->error;
+    }
+}
+?>
+
 <body>
     <div class="logo-container">
         <span class="typing-animation">AeroOptimize</span>
