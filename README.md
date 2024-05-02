@@ -4,3 +4,4 @@ Sachet Neupane
 Rieshab Dev
 Umanga Adhikari
 Rabin Wosti
+Zahid Jamal
